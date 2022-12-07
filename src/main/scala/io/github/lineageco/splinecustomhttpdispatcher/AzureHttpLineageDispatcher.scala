@@ -81,6 +81,7 @@ class AzureHttpLineageDispatcher(restClient: AzureRestClient, apiVersionOption: 
 object AzureHttpLineageDispatcher extends Logging {
   private def createDefaultRestClient(config: AzureHttpLineageDispatcherConfig): AzureRestClient = {
     logInfo(s"Producer URL: ${config.producerUrl}")
+    
     AzureRestClient(
       Http,
       config.producerUrl,
@@ -89,6 +90,8 @@ object AzureHttpLineageDispatcher extends Logging {
       config.secHeader
     )
   }
+  
+  
 
   private def getServerHeaders(restClient: AzureRestClient): Map[String, IndexedSeq[String]] = {
     val unableToConnectMsg = "Spark Agent was not able to establish connection to Spline Gateway"
