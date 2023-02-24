@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.lineageco</groupId>
-  <artifactId>splinecustomhttpdispatcher</artifactId>
-  <version>1.2.0</version>
+  <artifactId>spark-3.1-splinecustomhttpdispatcher_2.12</artifactId>
+  <version>1.0.0</version>
   <inceptionYear>2008</inceptionYear>
   <properties>
     <scala.version>2.12.3</scala.version>
@@ -11,7 +11,7 @@
     <scala.compat.version>2.12</scala.compat.version>
     <scala.binary.version>2.12</scala.binary.version>
 
-    <spark.version>${spark-32.version}</spark.version>
+    <spark.version>${spark-31.version}</spark.version>
     <spark-22.version>2.2.3</spark-22.version>
     <spark-23.version>2.3.4</spark-23.version>
     <spark-24.version>2.4.8</spark-24.version>
@@ -61,7 +61,7 @@
     <!-- https://mvnrepository.com/artifact/za.co.absa.spline.agent.spark/spark-3.2-spline-agent-bundle -->
     <dependency>
       <groupId>za.co.absa.spline.agent.spark</groupId>
-      <artifactId>spark-3.2-spline-agent-bundle_2.12</artifactId>
+      <artifactId>spark-3.1-spline-agent-bundle_2.12</artifactId>
       <version>1.0.0</version>
     </dependency>
 
