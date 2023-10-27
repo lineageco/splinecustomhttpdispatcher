@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>io.github.lineageco</groupId>
+  <artifactId>spark-3.3-splinecustomhttpdispatcher_2.12</artifactId>
+  <versioning>
+    <versions>
+      <version>1.1.2-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20231027060708</lastUpdated>
+  </versioning>
+</metadata>

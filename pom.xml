@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.lineageco</groupId>
   <artifactId>spark-3.3-splinecustomhttpdispatcher_2.12</artifactId>
-  <version>1.1.1</version>
+  <version>1.1.2-SNAPSHOT</version>
   <inceptionYear>2008</inceptionYear>
   <properties>
     <scala.version>2.12.3</scala.version>
