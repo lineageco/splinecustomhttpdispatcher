@@ -10,6 +10,8 @@ import scala.util.control.NonFatal
 import za.co.absa.spline.producer.model.{ExecutionEvent, ExecutionPlan}
 import za.co.absa.spline.harvester.dispatcher.LineageDispatcher
 import com.databricks.dbutils_v1.DBUtilsHolder.dbutils
+import com.azure.identity.ClientSecretCredentialBuilder
+import com.azure.storage.file.datalake.DataLakeServiceClientBuilder
 
 /**
  * AzureBlobLineageDispatcherConfig is responsible for sending the lineage data to Azure Blob Storage through the producer API
@@ -22,7 +24,11 @@ import za.co.absa.spline.harvester.json.HarvesterJsonSerDe.impl._
 
 class AzureBlobLineageDispatcher(filePath: String,
                                  fileNameKey: String,
-                                 apiVersion: Version)
+                                 apiVersion: Version,
+                                 accountName: String,
+                                 clientId: String,
+                                 clientSecret: String,
+                                 tenantId: String)
   extends LineageDispatcher
     with Logging {
 
@@ -30,13 +36,30 @@ class AzureBlobLineageDispatcher(filePath: String,
   def this(conf: Configuration) = this(
     filePath = conf.getRequiredString(FilePath),
     fileNameKey = conf.getRequiredString(FileNameKey),
-    apiVersion = Version.asSimple(conf.getRequiredString(ApiVersion))
+    apiVersion = Version.asSimple(conf.getRequiredString(ApiVersion)),
+    accountName = conf.getRequiredString(AccountName),
+    clientId = conf.getRequiredString(ClientId),
+    clientSecret = conf.getRequiredString(ClientSecret),
+    tenantId = conf.getRequiredString(TenantId)
   )
   logInfo(s"Using File Path: ${filePath}")
   logInfo(s"Using file name key: ${fileNameKey}")
   logInfo(s"Using api version: ${apiVersion}")
 
   override def name = "Blob"
+
+  // Build the Service Principal credentials
+  val clientSecretCredential = new ClientSecretCredentialBuilder()
+    .clientId(clientId)
+    .clientSecret(clientSecret)
+    .tenantId(tenantId)
+    .build()
+
+  // Build the ADLS Gen2 service client
+  val serviceClient = new DataLakeServiceClientBuilder()
+    .endpoint(s"https://${accountName}.dfs.core.windows.net")
+    .credential(clientSecretCredential)
+    .buildClient()
 
   private val modelMapper = ModelMapper.forApiVersion(apiVersion)
 
@@ -70,13 +93,13 @@ class AzureBlobLineageDispatcher(filePath: String,
 
     val completeDbfsFilePath = s"${dbfsFilePath}/${fileNameWithDateTime}"
 
-    try {
-      dbutils.fs.put(completeDbfsFilePath, json, true)
-
-    } catch {
-      case NonFatal(e) =>
-        throw new RuntimeException(s"Cannot write data to ${completeDbfsFilePath}", e)
-    }
+//    try {
+//      dbutils.fs.put(completeDbfsFilePath, json, true)
+//
+//    } catch {
+//      case NonFatal(e) =>
+//        throw new RuntimeException(s"Cannot write data to ${completeDbfsFilePath}", e)
+//    }
   }
 
 }
@@ -85,6 +108,10 @@ object AzureBlobLineageDispatcher {
   val FilePath = "databricks.filepath"
   val FileNameKey = "file.name.key"
   val ApiVersion = "apiVersion"
+  val AccountName = "account.name"
+  val ClientId = "client.id"
+  val ClientSecret = "client.secret"
+  val TenantId = "tenant.id"
 
 }
 

@@ -3,7 +3,7 @@
   <groupId>io.github.lineageco</groupId>
   <artifactId>spark-3.3-splinecustomhttpdispatcher_2.12</artifactId>
   <versioning>
-    <lastUpdated>20231027060708</lastUpdated>
+    <lastUpdated>20231027094510</lastUpdated>
     <snapshot>
       <localCopy>true</localCopy>
     </snapshot>
@@ -12,45 +12,45 @@
         <classifier>sources</classifier>
         <extension>jar.asc</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>javadoc</classifier>
         <extension>jar.asc</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom.asc</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>jar.asc</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>javadoc</classifier>
         <extension>jar</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>jar</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
         <value>1.1.2-SNAPSHOT</value>
-        <updated>20231027060708</updated>
+        <updated>20231027094510</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
