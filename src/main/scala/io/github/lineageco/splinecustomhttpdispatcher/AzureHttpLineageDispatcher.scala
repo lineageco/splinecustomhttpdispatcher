@@ -34,6 +34,8 @@ import za.co.absa.spline.harvester.dispatcher.LineageDispatcher
 import za.co.absa.spline.harvester.dispatcher.SplineHeaders
 import za.co.absa.spline.harvester.dispatcher.ProducerApiVersion
 
+import java.net.SocketTimeoutException
+
 /**
  * AzureHttpLineageDispatcherConfig is responsible for sending the lineage data to spline gateway through producer API
  */
@@ -57,6 +59,9 @@ class AzureHttpLineageDispatcher(restClient: AzureRestClient, apiVersionOption: 
   private val executionEventsEndpoint = restClient.endpoint(RESTResource.ExecutionEvents)
 
   private lazy val serverHeaders: Map[String, IndexedSeq[String]] = getServerHeaders(restClient)
+
+//  private val isEmptyServerHeaders = serverHeaders.isEmpty
+
   private val apiVersion: Version = apiVersionOption.getOrElse(resolveApiVersion(serverHeaders))
 
   logInfo(s"Using Producer API version: ${apiVersion.asString}")
@@ -100,6 +105,7 @@ class AzureHttpLineageDispatcher(restClient: AzureRestClient, apiVersionOption: 
         throw new RuntimeException(s"Cannot send lineage data to $url", e)
     }
   }
+
 }
 
 object AzureHttpLineageDispatcher extends Logging {
@@ -116,6 +122,7 @@ object AzureHttpLineageDispatcher extends Logging {
     )
   }
 
+  /*
   private def getServerHeaders(restClient: AzureRestClient): Map[String, IndexedSeq[String]] = {
     val unableToConnectMsg = "Spark Agent was not able to establish connection to Spline Gateway"
     val serverHasIssuesMsg = "Connection to Spline Gateway: OK, but the Gateway is not initialized properly! Check Gateway logs"
@@ -138,13 +145,50 @@ object AzureHttpLineageDispatcher extends Logging {
       .withDefaultValue(Array.empty[String])
   }
 
+   */
+  private def getServerHeaders(restClient: AzureRestClient): Map[String, IndexedSeq[String]] = {
+    val statusEndpoint = restClient.endpoint(RESTResource.Status)
+
+    val unableToConnectMsg = "Spark Agent was not able to establish connection to Spline Gateway"
+    val serverHasIssuesMsg = "Connection to Spline Gateway: OK, but the Gateway is not initialized properly! Check Gateway logs"
+    logInfo("Inside getServerHeaders")
+    try{
+      Try(statusEndpoint.head())
+        .map {
+          case resp if resp.is2xx =>
+            resp.headers
+          case resp if resp.is5xx =>
+//            logWarning(createHttpErrorMessage(serverHasIssuesMsg, resp.code, resp.body))
+//            Map.empty[String, IndexedSeq[String]]
+            throw new SplineInitializationException(createHttpErrorMessage(serverHasIssuesMsg, resp.code, resp.body))
+          case resp =>
+//            logWarning(createHttpErrorMessage(unableToConnectMsg, resp.code, resp.body))
+//            Map.empty[String, IndexedSeq[String]]
+            throw new SplineInitializationException(createHttpErrorMessage(unableToConnectMsg, resp.code, resp.body))
+        }
+        .getOrElse(Map.empty[String, IndexedSeq[String]])
+    } catch {
+      case e: SocketTimeoutException =>
+//        Map.empty[String, IndexedSeq[String]]
+        throw new SplineInitializationException(serverHasIssuesMsg,e)
+    }
+
+  }
+
   private def createHttpErrorMessage(msg: String, code: Int, body: String): String = {
     s"$msg. HTTP Response: $code $body"
   }
 
-  private def resolveRequestCompression(serverHeaders: Map[String, IndexedSeq[String]]): Boolean =
-    serverHeaders(SplineHeaders.AcceptRequestEncoding)
-      .exists(_.toLowerCase == Encoding.GZIP)
+  private def resolveRequestCompression(serverHeaders: Map[String, IndexedSeq[String]]): Boolean = {
+
+    if(serverHeaders.nonEmpty) {
+      serverHeaders(SplineHeaders.AcceptRequestEncoding)
+        .exists(_.toLowerCase == Encoding.GZIP)
+    } else {
+      false
+    }
+
+  }
 
   private def resolveApiVersion(serverHeaders: Map[String, IndexedSeq[String]]): Version = {
     val serverApiVersions =
